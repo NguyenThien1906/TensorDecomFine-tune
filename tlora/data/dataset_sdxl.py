@@ -1,5 +1,6 @@
 import os
 import json
+import random
 
 from PIL import Image
 from pathlib import Path
@@ -10,6 +11,7 @@ from torchvision.transforms import (
     Compose, Resize, Normalize, InterpolationMode, ToTensor, RandomCrop, RandomHorizontalFlip, CenterCrop
 )
 
+BASE_PROMPT = "a photo of {0} {1}"
 BICUBIC = InterpolationMode.BICUBIC
 
 # tokenizers: list[tokenizers], prompt: str
@@ -228,7 +230,6 @@ class DreamBoothDataset(Dataset):
 
         return example
 
-
 # custom collate for DreamBooth
 def collate_fn(examples, with_prior_preservation=False):
     input_ids = [example["instance_prompt_ids"] for example in examples]
@@ -266,32 +267,114 @@ def collate_fn(examples, with_prior_preservation=False):
 
 class CustomDataset(Dataset):
     def __init__(self,
+        config,
         data_root,
-        data_prompt_path,
-        prompt_and_class_path="prompts",
         tokenizers,
-        resolution=1024,
-        center_crop=False
+        prompt_and_class_path="prompts_and_classes.json",
+        resolution=1024
     ):
+        self.resolution=resolution
+        self.config = config
         self.data_root = Path(data_root)
+        self.prompt_and_class_path = Path(prompt_and_class_path)
         if not self.data_root.exists():
             raise ValueError("Data root doesn't exists.")
+        if not self.prompt_and_class_path.exists():
+            raise ValueError("Prompt and class file doesn't exists.")
         
-        # get list of prompts and class names from "prompts_and_classes.txt"
-        self.data_fnames = 
+        # get list of prompts and class names from "prompts_and_classes.json"
+        self.data = None
+        with open(self.prompt_and_class_path, 'r') as f:
+            self.data = json.load(f)
 
+        if self.data is None:
+            raise ValueError("Failed to load prompts and classes from the file.")
 
-        self.num_images = len(self.data_fnames)
-        self._length = self.num_images
-        with open(data_prompt_path, 'r') as f:
-            data_prompts = json.load(f)
-        self.prompts = [data_prompts[img.name] for img in self.data_fnames]
+        # from the list of subject names, read the corresponding folders of images and get class type
+        self.num_images = 0
+        for subject_name in self.data["classes"].keys():
+            subject_folder = os.path.join(self.data_root, subject_name)
+            if not os.path.exists(subject_folder):
+                raise ValueError(f"Subject folder {subject_folder} doesn't exist.")
+            self.data[subject_name]["image_paths"] = [os.path.join(subject_folder, f) for f in os.listdir(subject_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif'))]
+            self.num_images += len(self.data[subject_name]["image_paths"])
+
+        self._length = self.num_images * max([len(v) for v in self.data["prompts"].values()])
+        
         # image preprocessing pipeline setup
         self.image_transforms = Compose(
             [
-                Resize(resolution, interpolation=InterpolationMode.BILINEAR, antialias=True),
-                CenterCrop(resolution) if center_crop else RandomCrop(resolution),
+                Resize(self.resolution, interpolation=InterpolationMode.BILINEAR, antialias=True),
+                CenterCrop(self.resolution) if center_crop else RandomCrop(self.resolution),
                 ToTensor(),
                 Normalize([0.5], [0.5]),
             ]
         )
+
+    def getimageidx(self, idx):
+        if idx >= self.num_images or idx < 0:
+            raise IndexError("Index out of range.")
+        if self.data is None:
+            raise ValueError("Data is not loaded.")
+        for subject_name in self.data["classes"].keys():
+            num_subject_images = len(self.data[subject_name]["image_paths"])
+            if idx < num_subject_images:
+                 return subject_name, self.data[subject_name]["image_paths"][idx]
+            else:
+                idx -= num_subject_images
+        raise IndexError("Index out of range.")
+
+    def __getitem__(self, index):
+        example = {}
+
+        # retrieval
+        subject_name, image_path = self.getimageidx(index)
+        image = Image.open(image_path)
+
+        # get prompts from class name and sample one randomly
+        class_name = self.data["classes"][subject_name]
+        class_type = self.data["class_types"][class_name]
+        prompt_type = self.data["prompt_types"][class_type]
+        prompt_list = self.data["prompts"][prompt_type]
+        prompt_list.extend(BASE_PROMPT)
+        prompt = random.choice(prompt_list).format(self.config.placeholder_token, class_name)
+
+        # image
+        example["original_size"] = torch.tensor(image.size)
+        assert image.size[0] == image.size[1], \
+            'SDXL has a complicated procedure to handle rectangle images. We do not implement it'
+        example["crop_top_left"] = torch.tensor([0, 0])
+
+        if not image.mode == "RGB":
+            image = image.convert("RGB")
+        example["image"] = self.image_transforms(image)
+
+        # prompt tokenization
+        example["prompt_ids"], example["prompt_ids_2"] = tokenize_prompt(self.tokenizers, prompt)
+
+        return example
+
+def collate_custom(examples):
+    input_ids = [example["prompt_ids"] for example in examples]
+    input_ids_2 = [example["prompt_ids_2"] for example in examples]
+    pixel_values = [example["image"] for example in examples]
+    original_sizes = [example["original_size"] for example in examples]
+    crop_top_lefts = [example["crop_top_left"] for example in examples]
+
+    # this is just to resize
+    pixel_values = torch.stack(pixel_values)
+    original_sizes = torch.stack(original_sizes)
+    crop_top_lefts = torch.stack(crop_top_lefts)
+    pixel_values = pixel_values.to(memory_format=torch.contiguous_format).float()
+
+    input_ids = torch.cat(input_ids, dim=0)
+    input_ids_2 = torch.cat(input_ids_2, dim=0)
+
+    batch = {
+        "input_ids": input_ids,
+        "input_ids_2": input_ids_2,
+        "pixel_values": pixel_values,
+        "original_sizes": original_sizes,
+        "crop_top_lefts": crop_top_lefts
+    }
+    return batch

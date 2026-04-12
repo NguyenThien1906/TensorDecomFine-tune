@@ -300,12 +300,20 @@ class LoraTrainerSDXL:
                 )
             )
         else: # one-image dataset
-            self.train_dataset = ImageDataset(
-                train_data_dir=self.config.train_data_dir,
-                resolution=self.config.resolution,
-                one_image=self.config.one_image,
+            # self.train_dataset = ImageDataset(
+            #     train_data_dir=self.config.train_data_dir,
+            #     resolution=self.config.resolution,
+            #     one_image=self.config.one_image,
+            # )
+            # collator = None
+            self.train_dataset = CustomDataset(
+                config=self.config,
+                data_root=self.config.train_data_dir,
+                tokenizers=(self.tokenizer, self.tokenizer_2)
             )
-            collator = None
+            collator: Optional[Callable[[Any], dict[str, torch.Tensor]]] = (
+                lambda examples: collate_custom(examples)
+            )
 
         self.train_dataloader = DataLoader(
             self.train_dataset,
@@ -800,44 +808,3 @@ class TLoraTrainerSDXL(LoraTrainerSDXL):
             outputs.float(), target.to(self.unet.device).float(), reduction="mean"
         )
         return loss.item()
-
-@trainers.add_to_registry("sdxl_lora_fulldataset")
-class LoraTrainerSDXLFullDataset(LoraTrainerSDXL):
-    def setup_dataset(self):
-        # DreamBooth-style training
-        if self.config.with_prior_preservation:
-            self.train_dataset = DreamBoothDataset(
-                instance_data_root=self.config.train_data_dir,
-                instance_prompt=BASE_PROMPT.format(
-                    f"{self.config.placeholder_token} {self.config.class_name}"
-                ),
-                class_data_root=(
-                    self.config.class_data_dir
-                    if self.config.with_prior_preservation
-                    else None
-                ),
-                class_prompt=BASE_PROMPT.format(self.config.class_name),
-                tokenizers=(self.tokenizer, self.tokenizer_2),
-                size=self.config.resolution,
-            )
-            collator: Optional[Callable[[Any], dict[str, torch.Tensor]]] = (
-                lambda examples: collate_fn(
-                    examples, self.config.with_prior_preservation
-                )
-            )
-        else: # one-image dataset
-            self.train_dataset = ImageDataset(
-                train_data_dir=self.config.train_data_dir,
-                resolution=self.config.resolution,
-                one_image=self.config.one_image,
-            )
-            collator = None
-
-        self.train_dataloader = DataLoader(
-            self.train_dataset,
-            batch_size=self.config.train_batch_size,
-            shuffle=True,
-            collate_fn=collator,
-            num_workers=self.config.dataloader_num_workers,
-            generator=self.generator,
-        )

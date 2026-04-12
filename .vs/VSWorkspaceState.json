@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\dreambooth-main",
+    "\\dreambooth-main\\dataset",
+    "\\tlora",
+    "\\tlora\\data",
+    "\\tlora\\model"
+  ],
+  "SelectedNode": "\\tlora\\trainer_sdxl.py",
+  "PreviewInSolutionExplorer": false
+}
