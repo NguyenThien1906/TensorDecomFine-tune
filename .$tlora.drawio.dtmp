@@ -1,0 +1,69 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.1.2 Chrome/138.0.7204.243 Electron/37.4.0 Safari/537.36" version="28.1.2" pages="2">
+  <diagram name="train" id="8rx0D8ZzcMKqP84pAz0W">
+    <mxGraphModel dx="662" dy="1711" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ikuSL0h1ZMgP9VzXFzPI-1" value="- trainer_type (str)&lt;br&gt;- trainer_class (str)&lt;br&gt;- project_name (str, default=&quot;tlora&quot;)&lt;br&gt;- wandb_api_key (str, optional)&lt;br&gt;- seed (int, default=0)&lt;br&gt;&lt;br&gt;- pretrained_model_name_or_path (str, default=&quot;stabilityai/stable-diffusion-xl-base-1.0&quot;)&lt;br&gt;- mixed_precision (str, choices: no | fp16 | bf16, default=&quot;no&quot;)&lt;br&gt;- revision (str, optional)&lt;br&gt;&lt;br&gt;- num_train_epochs (int, default=1000)&lt;br&gt;- checkpointing_steps (int, default=200)&lt;br&gt;&lt;br&gt;- train_data_dir (str)&lt;br&gt;- train_batch_size (int, default=1)&lt;br&gt;- dataloader_num_workers (int, default=1)&lt;br&gt;- resolution (int, default=1024)&lt;br&gt;- output_dir (str)&lt;br&gt;&lt;br&gt;- class_data_dir (str, optional)&lt;br&gt;- prior_loss_weight (float, default=1.0)&lt;br&gt;- with_prior_preservation (bool flag)&lt;br&gt;&lt;br&gt;- class_name (str)&lt;br&gt;- placeholder_token (str)&lt;br&gt;- validation_prompts (str, optional)&lt;br&gt;- num_val_imgs_per_prompt (int, default=5)&lt;br&gt;&lt;br&gt;- lora_rank (int, default=4)&lt;br&gt;- min_rank (int, default=1)&lt;br&gt;- sig_type (str, choices: principal | last | middle, default=&quot;last&quot;)&lt;br&gt;- alpha_rank_scale (float, default=1.0)&lt;br&gt;&lt;br&gt;- learning_rate (float, default=1e-4)&lt;br&gt;- adam_beta1 (float, default=0.9)&lt;br&gt;- adam_beta2 (float, default=0.999)&lt;br&gt;- adam_weight_decay (float, default=1e-4)&lt;br&gt;- adam_epsilon (float, default=1e-8)&lt;br&gt;&lt;br&gt;- one_image (str, optional)" style="rounded=1;whiteSpace=wrap;html=1;align=left;arcSize=0;" parent="1" vertex="1">
+          <mxGeometry x="110" y="-270" width="360" height="610" as="geometry" />
+        </mxCell>
+        <mxCell id="ikuSL0h1ZMgP9VzXFzPI-4" value="&amp;lt;&amp;lt;&amp;lt; train.py::main(args) &amp;gt;&amp;gt;&amp;gt;&lt;div&gt;&lt;br&gt;from tlora.trainer_sdxl import trainers&lt;br&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;// get instance of specified class, with args&lt;/div&gt;&lt;div&gt;trainer = trainers[args.trainer_class](args)&lt;br&gt;# trainers[args.trainer_class] -&amp;gt; trainers.classes[args.trainer_class]&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;// train the model with preset functions&lt;br&gt;trainer.setup()&lt;/div&gt;&lt;div&gt;trainer.train()&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;size=18;align=left;" parent="1" vertex="1">
+          <mxGeometry x="540" y="-180" width="370" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="ikuSL0h1ZMgP9VzXFzPI-5" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;" parent="1" source="ikuSL0h1ZMgP9VzXFzPI-4" target="ikuSL0h1ZMgP9VzXFzPI-1" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="620" y="10" as="sourcePoint" />
+            <mxPoint x="780" y="10" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ikuSL0h1ZMgP9VzXFzPI-7" value="" style="endArrow=open;endFill=1;endSize=12;html=1;rounded=0;" parent="1" source="ikuSL0h1ZMgP9VzXFzPI-4" target="ikuSL0h1ZMgP9VzXFzPI-8" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="700" y="-230" as="sourcePoint" />
+            <mxPoint x="860" y="-230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ikuSL0h1ZMgP9VzXFzPI-8" value="&amp;lt;&amp;lt;&amp;lt; tlora/trainer_sdxl.py::trainers&amp;gt;&amp;gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;from .utils.registry import ClassRegistry&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;trainers = ClassRegistry()&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;size=18;align=left;" parent="1" vertex="1">
+          <mxGeometry x="810" y="-350" width="230" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="ikuSL0h1ZMgP9VzXFzPI-9" value="&amp;lt;&amp;lt;&amp;lt; tlora/utils/registry.py::ClassRegistry&amp;gt;&amp;gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&quot;Just a user-defined class for registering some data&quot;&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;size=18;align=left;" parent="1" vertex="1">
+          <mxGeometry x="810" y="-520" width="230" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="ikuSL0h1ZMgP9VzXFzPI-19" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;tlora/trainer_sdxl.py&lt;/i&gt;&lt;i style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;gt;&amp;gt;&lt;/i&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;LoraTrainerSDXL&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- config&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ setup_exp_name(exp_idx)&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ setup_exp()&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ setup_accelerator()&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ setup_base_model()&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ setup_model()&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ setup_optimizer()&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ setup_dataset()&lt;br&gt;+ move_to_device()&lt;br&gt;+ setup_seed()&lt;br&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ train_step(batch)&lt;br&gt;+ setup_pipeline()&lt;br&gt;+ validation(epoch)&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ save_model(epoch)&lt;br&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ setup()&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ train()&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="1000" y="-200" width="190" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="ikuSL0h1ZMgP9VzXFzPI-20" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;tlora/utils/registry.py&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;TLoraTrainerSDXL&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;- config&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ setup_exp_name(exp_idx)&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ get_mask_by_timestep(...)&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;+ train_step(batch)&lt;br&gt;+ setup_pipeline()&lt;br&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ validation_loss()&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="1340" y="-125" width="190" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="ikuSL0h1ZMgP9VzXFzPI-21" value="Extends" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;" parent="1" source="ikuSL0h1ZMgP9VzXFzPI-20" target="ikuSL0h1ZMgP9VzXFzPI-19" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="1360" y="-360" as="sourcePoint" />
+            <mxPoint x="1520" y="-360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ikuSL0h1ZMgP9VzXFzPI-22" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" source="ikuSL0h1ZMgP9VzXFzPI-8" target="ikuSL0h1ZMgP9VzXFzPI-9" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="740" y="-360" as="sourcePoint" />
+            <mxPoint x="790" y="-410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ikuSL0h1ZMgP9VzXFzPI-23" value="" style="endArrow=open;endFill=1;endSize=12;html=1;rounded=0;" parent="1" source="ikuSL0h1ZMgP9VzXFzPI-4" target="ikuSL0h1ZMgP9VzXFzPI-19" edge="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="960" y="-40" as="sourcePoint" />
+            <mxPoint x="1008" y="-90" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ikuSL0h1ZMgP9VzXFzPI-24" value="&amp;lt;&amp;lt;&amp;lt; LoraTrainerSDXL::setup() &amp;gt;&amp;gt;&amp;gt;&lt;div&gt;&lt;br&gt;&lt;div&gt;self.setup_exp()&lt;/div&gt;&lt;div&gt;self.setup_accelerator()&lt;/div&gt;&lt;div&gt;self.setup_seed()&lt;/div&gt;&lt;div&gt;self.setup_base_model()&lt;/div&gt;&lt;div&gt;self.setup_model()&lt;/div&gt;&lt;div&gt;self.setup_optimizer()&lt;/div&gt;&lt;div&gt;self.setup_lr_scheduler()&lt;/div&gt;&lt;div&gt;self.setup_dataset()&lt;/div&gt;&lt;div&gt;self.move_to_device()&lt;/div&gt;&lt;div&gt;self.setup_pipeline()&lt;/div&gt;&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;size=18;align=left;" parent="1" vertex="1">
+          <mxGeometry x="860" y="180" width="220" height="200" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="inference" id="cWDygCzf-eW4sOVjmlgw">
+    <mxGraphModel dx="552" dy="618" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="SBX8Uqoko9qdu_1jJi5R-0" />
+        <mxCell id="SBX8Uqoko9qdu_1jJi5R-1" parent="SBX8Uqoko9qdu_1jJi5R-0" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
