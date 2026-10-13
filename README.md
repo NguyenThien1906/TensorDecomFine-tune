@@ -1,6 +1,6 @@
 # Fine-tuning Diffusion Models using Tensor Decomposition
 
-**Language:** English | [Tiếng Việt](#tiếng-việt)
+**Language:** English | [Tiếng Việt](#tinh-chỉnh-mô-hình-khuếch-tán-sử-dụng-phân-rã-tensor)
 
 ## Overview
 
@@ -12,9 +12,65 @@ A brief description of your project in English.
 * Feature 2
 * Feature 3
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \---
 
-# Tiếng Việt
+# Tinh chỉnh Mô hình khuếch tán sử dụng Phân rã tensor
 
 **Ngôn ngữ:** [English](#fine-tuning-diffusion-models-using-tensor-decomposition) | Tiếng Việt
 
