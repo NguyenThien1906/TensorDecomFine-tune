@@ -1,4 +1,4 @@
-# Project Name
+# Fine-tuning Diffusion Models using Tensor Decomposition
 
 **Language:** English | [Tiếng Việt](#tiếng-việt)
 
@@ -16,7 +16,7 @@ A brief description of your project in English.
 
 # Tiếng Việt
 
-**Ngôn ngữ:** [English](#project-name) | Tiếng Việt
+**Ngôn ngữ:** [English](#english) | Tiếng Việt
 
 ## Giới thiệu
 
